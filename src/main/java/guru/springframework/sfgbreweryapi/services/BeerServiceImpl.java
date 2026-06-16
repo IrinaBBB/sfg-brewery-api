@@ -70,7 +70,7 @@ public class BeerServiceImpl implements BeerService {
 
         log.debug("Getting beer by id: {}", id);
 
-        return Optional.of(beerMap.get(id));
+        return Optional.ofNullable(beerMap.get(id));
     }
 
     @Override
