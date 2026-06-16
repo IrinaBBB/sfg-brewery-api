@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -93,7 +94,7 @@ class BeerControllerTest {
                 .build();
 
         given(beerService.getBeerById(testBeer.getId()))
-                .willReturn(testBeer);
+                .willReturn(Optional.of(testBeer));
 
         mockMvc.perform(
                         get(BeerController.BEER_PATH_ID, testBeer.getId())
@@ -147,5 +148,13 @@ class BeerControllerTest {
         verify(beerService).deleteById(uuidArgumentCaptor.capture());
 
         assertThat(uuidArgumentCaptor.getValue()).isEqualTo(beer.getId());
+    }
+
+    @Test
+    void getBeerByIdNotFound() throws Exception {
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 }
